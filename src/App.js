@@ -8,6 +8,8 @@ import {
 } from 'react-router-dom';
 
 import SignIn from './components/SignIn/index';
+import Main from './components/Main/Main';
+import Dasboard from './screens/Dashboard'
 
 function App() {
   return (
@@ -34,9 +36,10 @@ function App() {
         {/* <Route path="/404">
           <Redirect to="/login" />
         </Route> */}
-        {/* <Route path="/">
-          <Todo />
-        </Route> */}
+        <Route path="/">
+          <Dasboard />  
+          {/* <Main classData={[]}/> */}
+        </Route>
         {/* <PrivateRoute path="/">
           <Todo />
         </PrivateRoute> */}

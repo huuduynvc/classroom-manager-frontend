@@ -121,6 +121,8 @@ import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 import { axiosInstance, parseJwt } from '../../utils';
 
+import { GoogleLogin } from 'react-google-login';
+
 const theme = createMuiTheme({
   palette:{
     primary:{main: '#F5B62A'},
@@ -163,6 +165,15 @@ export default function SignIn() {
   const history = useHistory();
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
 
+  const responseGoogle = (response) => {
+    console.log(response);
+    if(response){
+      localStorage.classroomApp_user = response;
+      history.push('/');
+    }
+    return response;
+  }
+
   const onSubmit = async function (data) {
     try {
       const res = await axiosInstance.post('/auth', data);
@@ -174,7 +185,8 @@ export default function SignIn() {
         localStorage.classroomApp_userId = obj.userId;
 
         history.push('/');
-      } else {
+      }
+      else{
         alert('Invalid login.');
       }
     } catch (err) {
@@ -214,7 +226,7 @@ export default function SignIn() {
           </Box>
         </Typography>
         <Typography component="div">
-          <Box fontSize={16} m={1} paddingT>
+          <Box fontSize={16} m={1} padding>
             Sign into your account
           </Box>
         </Typography>
@@ -262,12 +274,12 @@ export default function SignIn() {
               />
             </Grid>
 
-            <Grid item xs={9}>
+            {/* <Grid item xs={9}>
               <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
               />
-            </Grid>
+            </Grid> */}
               
             <Grid item xs={9} >
               <Button
@@ -283,23 +295,35 @@ export default function SignIn() {
               </Button>
             </Grid>
 
+            <Grid item>
+              <Link href="#" variant="body2" color="secondary" >
+              You do not have an account?
+              </Link>
+              <Link href="#" variant="body2" color="secondary" >
+               Sign up.
+              </Link>
+            </Grid>
+
             {/* <Grid item>
               <Link href="#" variant="body2" color="secondary" >
                 Forgot your password?
               </Link>
-            </Grid>
+            </Grid> */}
 
-            <Grid item xs={9}>  
+            {/* <Grid item xs={9}>  
               <Typography component="div">
-                <Box fontSize={20} m={3} paddingT>
+                <Box fontSize={20} m={3} padding>
                   <Link href="#" color="secondary" >
                         YOU DO NOT HAVE AN ACCOUNT?
                   </Link>
+                  <Link href="#" color="secondary" >
+                        Sign up
+                  </Link>
                 </Box>
               </Typography>
-            </Grid>
+            </Grid> */}
 
-            <Grid item xs={9}>
+            {/* <Grid item xs={9}>
               <Button
               type="submit"
               fullWidth
@@ -311,6 +335,15 @@ export default function SignIn() {
               SIGN UP
               </Button>
             </Grid> */}
+            <Grid item xs={9}>
+            <GoogleLogin
+              clientId="342822553087-tk3j3esq34irgp2qqvqt40c4pjjcmmd3.apps.googleusercontent.com"
+              buttonText="Login with Google"
+              onSuccess={responseGoogle}
+              onFailure={responseGoogle}
+              cookiePolicy={'single_host_origin'}
+            />
+            </Grid>
 
           </Grid>
 
