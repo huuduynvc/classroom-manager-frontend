@@ -1,15 +1,13 @@
-import React from 'react'
+import React from "react";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect,
   // Link
-} from 'react-router-dom';
+} from "react-router-dom";
 
-import SignIn from './components/SignIn/index';
-import Main from './components/Main/Main';
-import Dasboard from './screens/Dashboard'
+import SignIn from "./components/SignIn/index";
+import Dasboard from "./screens/Dashboard";
 
 function App() {
   return (
@@ -37,7 +35,7 @@ function App() {
           <Redirect to="/login" />
         </Route> */}
         <Route path="/">
-          <Dasboard />  
+          <Dasboard />
           {/* <Main classData={[]}/> */}
         </Route>
         {/* <PrivateRoute path="/">
@@ -45,28 +43,30 @@ function App() {
         </PrivateRoute> */}
       </Switch>
       {/* </div> */}
-    </Router >
+    </Router>
   );
 }
 
-function PrivateRoute({ children, ...rest }) {
-  return (
-    <Route
-      {...rest}
-      render={() =>
-        localStorage.todoApp_accessToken ? (
-          children
-        ) : (
-          <Redirect
-            to={{
-              pathname: '/signin',
-              // state: { from: location }
-            }}
-          />
-        )
-      }
-    />
-  );
-}
+// function PrivateRoute({ children, ...rest }:{children:React.ReactNode,rest:{
+//   [x: string]: any;
+// }}) {
+//   return (
+//     <Route
+//       {...rest}
+//       render={() =>
+//         localStorage.todoApp_accessToken ? (
+//           children
+//         ) : (
+//           <Redirect
+//             to={{
+//               pathname: "/signin",
+//               // state: { from: location }
+//             }}
+//           />
+//         )
+//       }
+//     />
+//   );
+// }
 
 export default App;

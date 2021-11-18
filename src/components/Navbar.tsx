@@ -1,22 +1,15 @@
 import { Avatar, IconButton, MenuItem, Menu } from "@material-ui/core";
 import { Add, Apps, Menu as MenuIcon } from "@material-ui/icons";
 import React, { useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useRecoilState } from "recoil";
-import { auth, logout } from "../firebase";
-import { createDialogAtom, joinDialogAtom } from "../utils/atoms";
 import CreateClass from "./CreateClass";
 import JoinClass from "./JoinClass";
 import "./Navbar.css";
 
 function Navbar() {
-  const [user, loading, error] = useAuthState(auth);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [createOpened, setCreateOpened] = useRecoilState(createDialogAtom);
-  const [joinOpened, setJoinOpened] = useRecoilState(joinDialogAtom);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleClick = (event:React.MouseEvent) => {
+    setAnchorEl(event.currentTarget as any);
   };
 
   const handleClose = () => {
@@ -50,8 +43,10 @@ function Navbar() {
           <IconButton>
             <Apps />
           </IconButton>
-          <IconButton onClick={logout}>
-            <Avatar src={user?.photoURL} />
+          <IconButton 
+          // onClick={logout}
+          >
+            <Avatar  />
           </IconButton>
           <Menu
             id="simple-menu"
@@ -62,7 +57,7 @@ function Navbar() {
           >
             <MenuItem
               onClick={() => {
-                setCreateOpened(true);
+                // setCreateOpened(true);
                 handleClose();
               }}
             >
@@ -70,7 +65,7 @@ function Navbar() {
             </MenuItem>
             <MenuItem
               onClick={() => {
-                setJoinOpened(true);
+                // setJoinOpened(true);
                 handleClose();
               }}
             >

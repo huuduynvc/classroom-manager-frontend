@@ -3,7 +3,7 @@ import { Menu, MoreVert } from "@material-ui/icons";
 import React from "react";
 import "./Announcement.css";
 
-function Announcement({ image, name, date, content, authorId }) {
+function Announcement({ image, name, date, content }:{image:any, name:string, date:any, content:any }) {
   return (
     <div className="announcement">
       <div className="announcement__informationContainer">

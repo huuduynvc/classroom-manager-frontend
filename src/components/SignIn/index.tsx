@@ -101,8 +101,6 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
@@ -112,10 +110,8 @@ import Container from '@material-ui/core/Container';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Lock from '@material-ui/icons/Lock';
-import Mail from '@material-ui/icons/Mail';
 import PersonIcon from '@material-ui/icons/Person';
 
-import Logo from '../../assets/logo.png'
 
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
@@ -163,9 +159,9 @@ export default function SignIn() {
   const classes = useStyles();
 
   const history = useHistory();
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const { register, handleSubmit } = useForm();
 
-  const responseGoogle = (response) => {
+  const responseGoogle = (response:any) => {
     console.log(response);
     if(response){
       localStorage.classroomApp_user = response;
@@ -174,9 +170,9 @@ export default function SignIn() {
     return response;
   }
 
-  const onSubmit = async function (data) {
+  const onSubmit = async function (data:any) {
     try {
-      const res = await axiosInstance.post('/auth', data);
+      const res:any = await axiosInstance.post('/auth', data);
       if (res.data.authenticated) {
         // console.log(res.data.accessToken);
         localStorage.classroomApp_accessToken = res.data.accessToken;
@@ -189,7 +185,7 @@ export default function SignIn() {
       else{
         alert('Invalid login.');
       }
-    } catch (err) {
+    } catch (err:any) {
       if (err.response) {
         console.log(err.response.data);
         // console.log(err.response.status);
@@ -246,7 +242,6 @@ export default function SignIn() {
                 fullWidth
                 id="username"
                 label="Username"
-                name="username"
                 autoComplete="username"
                 autoFocus
                 InputProps={{
@@ -262,7 +257,6 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
-              name="password"
               label="Password"
               type="password"
               id="password"
@@ -289,7 +283,6 @@ export default function SignIn() {
               variant="contained"
               color="secondary"
               className={classes.submit}
-              m={0}
               >
                 Sign In
               </Button>

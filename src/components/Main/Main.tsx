@@ -1,9 +1,7 @@
-import { Avatar, Button, TextField } from "@material-ui/core";
+import { Avatar, Button, TextField,Input } from "@material-ui/core";
 import React, { useState } from "react";
 import "../Main/style.css";
-import { useLocalContext } from "../../context/context";
 const Main = ({ classData }) => {
-  const { loggedInMail } = useLocalContext();
 
   const [showInput, setShowInput] = useState(false);
   const [inputValue, setInput] = useState("");
@@ -77,9 +75,8 @@ const Main = ({ classData }) => {
                       onChange={(e) => setInput(e.target.value)}
                     />
                     <div className="main__buttons">
-                      <input
+                      <Input
                         onChange={handleChange}
-                        variant="outlined"
                         color="primary"
                         type="file"
                       />

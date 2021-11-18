@@ -4,7 +4,7 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import "./ClassCard.css";
 
-function ClassCard({ name, creatorName, creatorPhoto, id, style }) {
+function ClassCard({ name, creatorName, creatorPhoto, id, style }:{name:string,creatorName:string,creatorPhoto:string,id:any,style:any}) {
   const history = useHistory();
 
   const goToClass = () => {
