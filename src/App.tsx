@@ -1,49 +1,50 @@
+import { ConnectedRouter } from "connected-react-router";
 import React from "react";
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
+  Redirect,
   // Link
 } from "react-router-dom";
+import WrapperLayout from "screens/WrapperLayout";
+import { history } from "utils";
 
-import SignIn from "./components/SignIn/index";
+import SignIn from "./screens/SignIn/index";
 import Dasboard from "./screens/Dashboard";
+import UserProfile from "./screens/UserProfile";
+import Class from "./screens/Class";
 
 function App() {
   return (
-    <Router>
-      {/* <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Todo App</Link>
-            </li>
-            <li>
-              <Link to="/login">Login</Link>
-            </li>
-          </ul>
-        </nav> */}
-
-      {/* A <Switch> looks through its children <Route>s and
-            renders the first one that matches the current URL. */}
+    <ConnectedRouter history={history}>
       <Switch>
-        {/* <Route path="/login" render={() => <Login />} /> */}
         <Route path="/signin">
           <SignIn />
         </Route>
-        {/* <Route path="/404">
-          <Redirect to="/login" />
-        </Route> */}
-        <Route path="/">
-          <Dasboard />
-          {/* <Main classData={[]}/> */}
+        <Route path="/error">
+          <h1>ERROR PAGE</h1>
         </Route>
-        {/* <PrivateRoute path="/">
-          <Todo />
-        </PrivateRoute> */}
+        <Route path="/">
+          <WrapperLayout>
+            <Switch>
+              <Route exact path="/">
+                <Dasboard />
+              </Route>
+              <Route path="/profile">
+                <UserProfile />
+              </Route>
+              <Route path="/class/:id">
+                <Class />
+              </Route>
+              <Route>
+                <Redirect to = "/error"/>
+              </Route>
+            </Switch>
+          </WrapperLayout>
+        </Route>
       </Switch>
       {/* </div> */}
-    </Router>
+    </ConnectedRouter>
   );
 }
 

@@ -1,14 +1,19 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import todoReducer from "features/todo/todoSlide";
+import {connectRouter, routerMiddleware} from "connected-react-router"
+import { history } from "utils";
+import peopleReducer from "features/people/peopleSlide";
+import classReducer from "features/class/classSlide";
 
 const rootReducer = combineReducers({
-  todo: todoReducer,
+  router: connectRouter(history),
+  people: peopleReducer,
+  class: classReducer
 });
 
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware(),
+    getDefaultMiddleware().concat(routerMiddleware(history)),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

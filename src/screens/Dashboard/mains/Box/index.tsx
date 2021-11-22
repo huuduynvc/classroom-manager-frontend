@@ -1,102 +1,46 @@
-import React from 'react'
+import React, { Suspense, useEffect } from "react";
 
-import Toolbar from '@mui/material/Toolbar';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-//import Chart from './Chart';
-import ClassCard from 'screens/Dashboard/components/ClassCard';
-import Copyright from 'screens/Dashboard/components/Copyright';
-import BoxComponent from '@mui/material/Box';
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import MediaCard from "screens/Dashboard/components/MediaCard";
+import { useHistory } from "react-router";
+import { getAllClass } from "features/class/classThunk";
+import { useDispatch, useSelector } from "react-redux";
+import { ClassState } from "features/class/classSlide";
+import CircularProgress from '@mui/material/CircularProgress';
+import { StoreState } from "models";
+import MyProgress from "components/MyProgress";
+
 const Box = () => {
-    return (
-        <BoxComponent
-        component="main"
-        sx={{
-          backgroundColor: (theme) =>
-            theme.palette.mode === 'light'
-              ? theme.palette.grey[100]
-              : theme.palette.grey[900],
-          flexGrow: 1,
-          height: '100vh',
-          overflow: 'auto',
-        }}
-      >
-        <Toolbar />
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-          <Grid container spacing={3}>
-            {/* Chart */}
-            {/* <Grid item xs={12} md={8} lg={9}>
-              <Paper
-                sx={{
-                  p: 2,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  height: 240,
-                }}
-              >
-              </Paper>
-            </Grid> */}
-            {/* Recent ClassCard */}
-            <Grid item xs={12} md={4} lg={3}>
-              <Paper
-                sx={{
-                  p: 2,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  height: 240,
-                }}
-              >
-                <ClassCard />
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={4} lg={3}>
-              <Paper
-                sx={{
-                  p: 2,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  height: 240,
-                }}
-              >
-                <ClassCard />
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={4} lg={3}>
-              <Paper
-                sx={{
-                  p: 2,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  height: 240,
-                }}
-              >
-                <ClassCard />
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={4} lg={3}>
-              <Paper
-                sx={{
-                  p: 2,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  height: 240,
-                }}
-              >
-                <ClassCard />
-              </Paper>
-            </Grid>
-            {/* Recent Orders */}
-            {/* <Grid item xs={12}>
-              <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                <Orders />
-              </Paper>
-            </Grid> */}
-          </Grid>
-          <Copyright sx={{ pt: 4 }} />
-        </Container>
-      </BoxComponent>
-    )
-}
+  const history = useHistory()
+  const dispatch = useDispatch()
+  const classState: ClassState = useSelector((state: StoreState) => state.class)
+  useEffect(() => {
+    (async () => {
+      await dispatch(getAllClass())
+    })()
+  }, [dispatch])
+  const handleClickImageClass = (id: number) => {
+    history.push(`/class/${id}`)
+  }
 
-export default Box
+  return (
+    <Suspense fallback={<CircularProgress />}>
+      <MyProgress error={classState.error} loading={classState.loading}>
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Grid container spacing={3}>
+          {
+            classState.list.map((ele) => 
+              (<Grid key={ele.id} item xs={12} md={4} lg={3}>
+                <MediaCard id={ele.id} name={ele.classname} img={ele.img!=null?ele.img:'/img.jpg'} onClick={handleClickImageClass} />
+              </Grid>)
+            )
+          }
+        </Grid>
+      </Container> 
+      </MyProgress> 
+    </Suspense>
+  );
+};
+
+export default Box;

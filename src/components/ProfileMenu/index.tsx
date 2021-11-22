@@ -22,8 +22,8 @@ export default function AccountMenu() {
     <React.Fragment>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>      
         <Tooltip title="Account settings">
-          <IconButton onClick={handleClick} size="small" sx={{ ml: 2 }}>
-            <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+          <IconButton onClick={handleClick} size="small" >
+            <Avatar >M</Avatar>
           </IconButton>
         </Tooltip>
       </Box>
