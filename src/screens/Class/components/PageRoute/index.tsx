@@ -43,6 +43,15 @@ const PageRoute = () => {
             </div>
           </ListItem>
         </NavLink>
+        <NavLink to={`/class/${params.id}/classwork`} className={classes.link}>
+          <ListItem sx={{ width: "auto" }} disablePadding>
+            <div onClick={() => history.push(`/class/${params.id}/classwork`)}>
+              <ListItemButton sx={{ width: "auto" }}>
+                <ListItemText sx={{ textAlign: "center" }} primary="Classwork" />
+              </ListItemButton>
+            </div>
+          </ListItem>
+        </NavLink>
         <NavLink to={`/class/${params.id}/list`} className={classes.link}>
           <ListItem sx={{ width: "auto" }} disablePadding>
             <div onClick={() => history.push(`/class/${params.id}/list`)}>

@@ -20,7 +20,8 @@
     "jsx": "react-jsx",
     "baseUrl": "./src/",
     "allowSyntheticDefaultImports": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "useUnknownInCatchVariables": false,
   },
   "include": [
     "src"

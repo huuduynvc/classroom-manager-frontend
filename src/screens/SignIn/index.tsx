@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -16,14 +16,25 @@ import PersonIcon from '@material-ui/icons/Person';
 
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
-import { axiosInstance, parseJwt } from 'config/axios';
 
 import { GoogleLogin } from 'react-google-login';
+import { useDispatch } from 'react-redux';
+import { loginAction } from 'features/user/userThunk';
+import { UserState } from 'features/user/userSlide';
+import { useSelector } from 'react-redux';
+import { StoreState } from 'models';
+import { CircularProgress } from '@mui/material';
+import { toast } from 'react-toastify';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { push } from 'connected-react-router';
+import { AuthContext } from 'context/AuthContext';
+import { parseJwt } from './../../config/axios';
+import { User } from 'models/User';
 
 const theme = createTheme({
-  palette:{
-    primary:{main: '#F5B62A'},
-    secondary:{main:'#383938'},
+  palette: {
+    primary: { main: '#F5B62A' },
+    secondary: { main: '#383938' },
   }
 });
 
@@ -38,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     borderradius: '4px',
     boxShadow: '0px 1px 5px 0px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.12)',
   },
-  inputF:{
+  inputF: {
 
   },
   avatar: {
@@ -58,154 +69,159 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignIn() {
   const classes = useStyles();
-
+  const userState: UserState = useSelector((state: StoreState) => state.user);
   const history = useHistory();
+  const { changeUser } = useContext(AuthContext)
   const { register, handleSubmit } = useForm();
+  const dispatch = useDispatch();
 
-  const responseGoogle = (response:any) => {
+  const responseGoogle = (response: any) => {
     console.log(response);
-    if(response){
+    if (response) {
       localStorage.classroomApp_user = response;
       history.push('/');
     }
     return response;
   }
 
-  const onSubmit = async function (data:any) {
-    history.push('/');
-    try {
-      const res:any = await axiosInstance.post('/auth', data);
-      if (res.data.authenticated) {
-        // console.log(res.data.accessToken);
-        localStorage.classroomApp_accessToken = res.data.accessToken;
-
-        const obj = parseJwt(res.data.accessToken);
-        localStorage.classroomApp_userId = obj.userId;
-
-        history.push('/');
-      }
-      else{
-        alert('Invalid login.');
-      }
-    } catch (err:any) {
-      if (err.response) {
-        console.log(err.response.data);
-        // console.log(err.response.status);
-        // console.log(err.response.headers);
-      } else if (err.request) {
-        console.log(err.request);
-      } else {
-        console.log('Error', err.message);
+  const onSubmit = async function (data: any) {
+    (async () => {
+      try {
+        const actionResult: any = await dispatch(loginAction(data));
+        const currentData = unwrapResult(actionResult)
+        if (changeUser && currentData.status === 200 && currentData.data.accessToken !== "") {
+          const user: User = parseJwt(currentData.data.accessToken)
+          changeUser(user)
+          dispatch(push('/'))
+        } else {
+          toast.error("Error login")
+        }
+      } catch (err) {
+        toast.error("Error login")
       }
 
-      // console.log(err.config);
-    }
+    })()
   }
 
   return (
     <MuiThemeProvider theme={theme}>
-    <Container component="main" maxWidth="sm">
-      <CssBaseline />
-      <div className={classes.paper}>
-      <Grid 
+      <Container component="main" maxWidth="sm">
+        <CssBaseline />
+        <div className={classes.paper}>
+          <Grid
             container
             direction="row"
             justify="center"
             alignItems="center"
-      >   
-        {/* <Grid item xs={9}>
+          >
+            {/* <Grid item xs={9}>
             <img src={Logo} maxWidth="300" alt="Logo" className={classes.avatar} />
         </Grid> */}
-      </Grid>
-        
-        <Typography component="div">
-          <Box fontSize={30} fontWeight={600} m={-2}>
+          </Grid>
+
+          <Typography component="div">
+            <Box fontSize={30} fontWeight={600} m={-2}>
               SIGN IN
-          </Box>
-        </Typography>
-        <Typography component="div">
-          <Box fontSize={16} m={1} padding>
-            Sign into your account
-          </Box>
-        </Typography>
-        <form className={classes.form} noValidate>
-          <Grid 
+            </Box>
+          </Typography>
+          <Typography component="div">
+            <Box fontSize={16} m={1} padding>
+              Sign into your account
+            </Box>
+          </Typography>
+          <form className={classes.form} noValidate>
+            <Grid
               container
               direction="row"
               justify="center"
               alignItems="center"
-          >
-            <Grid item xs={9}>
-              <TextField
-                className={classes.inputF}
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="username"
-                label="Username"
-                autoComplete="username"
-                autoFocus
-                InputProps={{
-                  startAdornment: <InputAdornment position="start"><PersonIcon color="disabled"/></InputAdornment>,
-                }}
-                {...register('username', { required: true })}
-              />
-            </Grid>
+            >
+              <Grid item xs={9}>
+                <TextField
+                  className={classes.inputF}
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="username"
+                  label="Username"
+                  autoComplete="username"
+                  autoFocus
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start"><PersonIcon color="disabled" /></InputAdornment>,
+                  }}
+                  {...register('username', { required: true })}
+                />
+              </Grid>
 
-            <Grid item xs={9}>
-              <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              InputProps={{
-                startAdornment: <InputAdornment position="start"><Lock color="disabled" /></InputAdornment>,
-              }}
-              {...register('password', { required: true })}
-              />
-            </Grid>
+              <Grid item xs={9}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start"><Lock color="disabled" /></InputAdornment>,
+                  }}
+                  {...register('password', { required: true })}
+                />
+              </Grid>
 
-            {/* <Grid item xs={9}>
+              {/* <Grid item xs={9}>
               <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
               />
             </Grid> */}
-              
-            <Grid item xs={9} >
-              <Button
-              type="submit"
-              onClick={handleSubmit(onSubmit)}
-              fullWidth
-              variant="contained"
-              color="secondary"
-              className={classes.submit}
-              >
-                Sign In
-              </Button>
-            </Grid>
 
-            <Grid item>
-              <Link href="#" variant="body2" color="secondary" >
-              You do not have an account?
-              </Link>
-              <Link href="#" variant="body2" color="secondary" >
-               Sign up.
-              </Link>
-            </Grid>
+              <Grid item xs={9} >
+                <Box sx={{ m: 1, position: 'relative' }}>
+                  <Button
+                    type="submit"
+                    onClick={handleSubmit(onSubmit)}
+                    fullWidth
+                    variant="contained"
+                    color="secondary"
+                    className={classes.submit}
+                    disabled={userState.loading}
+                  >
+                    Sign In
+                  </Button>  {userState.loading && (
+                    <CircularProgress
+                      size={24}
+                      sx={{
+                        color: 'blue',
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        marginTop: '-12px',
+                        marginLeft: '-12px',
+                      }}
+                    />
+                  )}
+                </Box>
+              </Grid>
 
-            {/* <Grid item>
+              <Grid item>
+                <Link href="#" variant="body2" color="secondary" >
+                  You do not have an account?
+                </Link>
+                <Link href="#" variant="body2" color="secondary" >
+                  Sign up.
+                </Link>
+              </Grid>
+
+              {/* <Grid item>
               <Link href="#" variant="body2" color="secondary" >
                 Forgot your password?
               </Link>
             </Grid> */}
 
-            {/* <Grid item xs={9}>  
+              {/* <Grid item xs={9}>  
               <Typography component="div">
                 <Box fontSize={20} m={3} padding>
                   <Link href="#" color="secondary" >
@@ -218,7 +234,7 @@ export default function SignIn() {
               </Typography>
             </Grid> */}
 
-            {/* <Grid item xs={9}>
+              {/* <Grid item xs={9}>
               <Button
               type="submit"
               fullWidth
@@ -230,22 +246,22 @@ export default function SignIn() {
               SIGN UP
               </Button>
             </Grid> */}
-            <Grid item xs={9}>
-            <GoogleLogin
-              clientId="342822553087-tk3j3esq34irgp2qqvqt40c4pjjcmmd3.apps.googleusercontent.com"
-              buttonText="Login with Google"
-              onSuccess={responseGoogle}
-              onFailure={responseGoogle}
-              cookiePolicy={'single_host_origin'}
-            />
+              <Grid item xs={9}>
+                <GoogleLogin
+                  clientId="342822553087-tk3j3esq34irgp2qqvqt40c4pjjcmmd3.apps.googleusercontent.com"
+                  buttonText="Login with Google"
+                  onSuccess={responseGoogle}
+                  onFailure={responseGoogle}
+                  cookiePolicy={'single_host_origin'}
+                />
+              </Grid>
+
             </Grid>
 
-          </Grid>
 
-          
-        </form>
-      </div>
-    </Container>
+          </form>
+        </div>
+      </Container>
     </MuiThemeProvider>
   );
 }

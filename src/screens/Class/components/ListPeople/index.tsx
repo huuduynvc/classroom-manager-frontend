@@ -7,7 +7,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Avatar from '@mui/material/Avatar';
 import Grid from '@mui/material/Grid';
 
-const ListPeople = ({ name = "Teachers", listUser,onClickInvite }: { name?: string, listUser: User[],onClickInvite:(name:string)=>void }) => {
+const ListPeople = ({ name = "Teachers", listUser,onClickInvite,activeInvite=false }: { name?: string, listUser: User[],onClickInvite:(name:string)=>void ,activeInvite?:boolean}) => {
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: "10px 10px 0 10px" }}>
@@ -15,7 +15,7 @@ const ListPeople = ({ name = "Teachers", listUser,onClickInvite }: { name?: stri
                     {name}
                 </h3>
                 <Tooltip title={`Invite ${name.toLowerCase()}`}>
-                    <IconButton onClick={() => onClickInvite(name)} color="primary" aria-label={`Invite ${name.toLowerCase()}`}>
+                    <IconButton disabled={activeInvite} onClick={() => onClickInvite(name)} color="primary" aria-label={`Invite ${name.toLowerCase()}`}>
                         <GroupAddIcon />
                     </IconButton>
                 </Tooltip>

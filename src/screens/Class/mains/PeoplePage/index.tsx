@@ -1,28 +1,48 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import ListPeople from './../../components/ListPeople/index';
-import {User} from 'models/User';
+import { User } from 'models/User';
 import DialogsInvite from 'screens/Class/components/DialogsInvite';
 
-import { getTeachersOfClass, getStudentsOfClass } from "features/people/peopleThunk";
+import { getClassMember } from "features/people/peopleThunk";
 import { useDispatch, useSelector } from "react-redux";
-import { PeopleState } from "features/people/peopleSlide";
-import { StoreState } from "models";
-import { useParams } from "react-router-dom";
+import { unwrapResult } from '@reduxjs/toolkit';
+import MyProgress from 'components/MyProgress';
+import { PeopleState } from 'features/people/peopleSlide';
+import { StoreState } from 'models';
+import { AuthContext } from 'context/AuthContext';
 
-const PeoplePage = () => {
+const PeoplePage = ({ id }: { id: string }) => {
     const dispatch = useDispatch()
-    const peopleState: PeopleState= useSelector((state: StoreState) => state.people)
-    //const param  = useParams();
-    //console.log(param);
+    const [teachers, setTeachers] = useState<User[]>([]);
+    const [students, setStudents] = useState<User[]>([]);
+    const peopleState: PeopleState = useSelector((state: StoreState) => state.people) 
+    const [activeInvite,setActiveInvite] = useState(false);
+    const {user}  = useContext(AuthContext)
     useEffect(() => {
         (async () => {
-        await dispatch(getTeachersOfClass('1'));
+            const resultActions: any = await dispatch(getClassMember(id));
+            const value = unwrapResult(resultActions);
+            if (value.data) {
+                const users: User[] = value.data
+                const newTeachers: User[] = []
+                const newStudents: User[] = []
+                users.map(userEle => {
+                    if (userEle.email === user?.email && userEle.role_member===1){
+                        setActiveInvite(true)
+                    }
+                    return userEle.role_member === 1 ?
+                    newTeachers.push(userEle) : newStudents.push(userEle)
+                }
+                )
+                setTeachers(newTeachers)
+                setStudents(newStudents)
+            }
         })()
-    }, [dispatch])
+    }, [dispatch, id,user?.email])
 
     const [open, setOpen] = React.useState(false);
-    const [name,setName] = React.useState("");
-    const [link,setLink] = React.useState("");
+    const [name, setName] = React.useState("");
+    const [link, setLink] = React.useState("");
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -30,19 +50,20 @@ const PeoplePage = () => {
     const handleClose = () => {
         setOpen(false);
     };
-    // const listUser:User[] = [{username:"Duy",id:"12323"},{username:"123123",id:"12323"}] 
-    const listUser:User[] = peopleState.list;
-    const onClickInvite = (name:string) =>{
+    // const listUser:User[] = peopleState.list;
+    const onClickInvite = (name: string) => {
         setName(name);
         setLink(name)
         handleClickOpen()
     }
     return (
-        <div>
-            <DialogsInvite link={link} name={name} open={open} handleClose={handleClose}/>
-            <ListPeople onClickInvite={onClickInvite} listUser={listUser}/>
-            <ListPeople onClickInvite={onClickInvite} name="Students" listUser={listUser}/>
-        </div>
+        <MyProgress error={peopleState.error} loading={peopleState.loading}>
+            <>
+            <DialogsInvite link={link} name={name} open={open} handleClose={handleClose} />
+            <ListPeople activeInvite={!activeInvite} onClickInvite={onClickInvite} listUser={teachers} />
+            <ListPeople onClickInvite={onClickInvite} name="Students" listUser={students} />
+            </>
+        </MyProgress>
     )
 }
 

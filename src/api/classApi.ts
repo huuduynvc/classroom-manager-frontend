@@ -1,10 +1,15 @@
-import { ListParams, ListResponse, Class } from 'models';
+import { ListParams, ListResponse, Class, Assignment } from 'models';
 import { axiosInstance } from 'config/axios';
 
 const classApi = {
   getAll(params?: ListParams): Promise<ListResponse<Class>> {
     const url = '/class';
     return axiosInstance.get(url, { params });
+  },
+
+  findByUserId(id: string): Promise<Class> {
+    const url = `/class/user/${id}`;
+    return axiosInstance.get(url);
   },
 
   getById(id: string): Promise<Class> {
@@ -36,6 +41,21 @@ const classApi = {
     const url = `/class/${id}/students`;
     return axiosInstance.get(url);
   },
+
+  getClassMemnersById(id: string): Promise<Class> {
+    const url = `/class/${id}/members`;
+    return axiosInstance.get(url);
+  },
+
+  getGradeStructByClassId(id: string): Promise<Class> {
+    const url = `/grade/class/${id}`;
+    return axiosInstance.get(url);
+  },
+
+  updateGradeByClassId(id:string,assignments: Assignment[]): Promise<any> {
+    const url = `/grade/class/${id}`;
+    return axiosInstance.post(url,{assignments})
+  }
 };
 
 export default classApi;

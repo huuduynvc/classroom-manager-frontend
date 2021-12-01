@@ -14,3 +14,10 @@ export const getStudentsOfClass = createAsyncThunk(
         return (await classApi.getStudentsById(id))
     }
 )
+
+export const getClassMember = createAsyncThunk(
+    'class/getClassMember',
+    async (id:string) =>{
+        return (await classApi.getClassMemnersById(id))
+    }
+)

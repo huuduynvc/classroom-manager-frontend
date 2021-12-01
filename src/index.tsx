@@ -5,17 +5,26 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
 import { store } from "./config/store";
-import {  ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { AuthProvider } from "context/AuthContext";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const mdTheme = createTheme();
 
 ReactDOM.render(
   <React.StrictMode>
+    <>
     <Provider store={store}>
       <ThemeProvider theme={mdTheme}>
-        <App />
+        <AuthProvider >
+          <App />
+        </AuthProvider>
       </ThemeProvider>
     </Provider>
+    
+    <ToastContainer />
+    </>
   </React.StrictMode>,
   document.getElementById("root")
 );

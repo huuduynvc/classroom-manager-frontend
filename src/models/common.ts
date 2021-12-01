@@ -1,6 +1,8 @@
+import { GradeState } from './../features/grade/gradeSlide';
 import { DefaultRootState } from "react-redux";
 import { ClassState } from 'features/class/classSlide';
 import { PeopleState } from 'features/people/peopleSlide';
+import { UserState } from 'features/user/userSlide';
 
 export interface PaginationParams {
   _limit: number;
@@ -24,5 +26,7 @@ export interface ListParams {
 
 export interface StoreState extends DefaultRootState{
   class:ClassState,
-  people: PeopleState
+  people: PeopleState,
+  user: UserState,
+  grade: GradeState
 }

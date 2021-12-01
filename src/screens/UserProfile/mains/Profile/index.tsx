@@ -5,19 +5,48 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { useForm, SubmitHandler  } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+import { useContext } from 'react';
+import { AuthContext } from 'context/AuthContext';
+
+import { useDispatch } from 'react-redux';
+import { updateProfileAction } from 'features/user/userThunk';
+import { toast } from 'react-toastify';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 type Inputs = {
-    name: string,
+    id: string,
+    fullname: string,
     studentid: string,
-    password:string
-  };
-  
+    //password: string
+};
+
 const Profile = () => {
+    const dispatch = useDispatch();
+
     const { register, handleSubmit, formState: { errors } } = useForm<Inputs>();
-    const onSubmit: SubmitHandler<Inputs> = data => {
-        console.log(data)
-    };
+    const { user, changeUser } = useContext(AuthContext)
+    const onSubmit = async function (data: any) {
+        (async () => {
+            try {
+                const actionResult: any = await dispatch(updateProfileAction(data));
+                const currentData = unwrapResult(actionResult);
+                if (currentData.status === 200 && changeUser) {
+                    if (user){
+                        user.studentID = data.studentid
+                        changeUser(user)
+                    }
+                    
+                    toast.success("Update profile successfully")
+                } else {
+                    toast.error("Error update profile")
+                }
+            } catch (err) {
+              toast.error("Error update profile")
+            }
+    
+        })()
+    }
 
     return (
         <Box
@@ -38,7 +67,7 @@ const Profile = () => {
             <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             </Avatar>
             <Typography component="h1" variant="h5">
-                Duy
+                User Profile
             </Typography>
             <Box component="form" noValidate sx={{ mt: 3 }}>
                 <Grid container spacing={2}>
@@ -50,27 +79,39 @@ const Profile = () => {
                             name="email"
                             label="Email"
                             autoComplete="email"
-                            value="duyh@github.com"
+                            value={user?.email}
                         />
                     </Grid>
                     <Grid item xs={12}>
                         <TextField
-                            error = {errors.name as any}
+                            error={errors.fullname as any}
                             fullWidth
-                            id="name"
-                            label="Name"
-                            autoComplete="name"
-                            {...register('name',{ pattern: /^[^0-9]+$/i })}
+                            id="fullname"
+                            label="Full Name"
+                            autoComplete="fullname"
+                            defaultValue={user?.fullname}
+                            {...register('fullname', { pattern: /^[^0-9]+$/i })}
                         />
                     </Grid><Grid item xs={12}>
                         <TextField
                             fullWidth
                             id="studentid"
                             label="Student ID"
+                            defaultValue={user?.studentID}
                             {...register('studentid')}
                         />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} hidden>
+                        <TextField
+                            fullWidth
+                            label="ID"
+                            id="id"
+                            autoComplete="id"
+                            value={user?.id}
+                            {...register('id')}
+                        />
+                    </Grid>
+                    {/* <Grid item xs={12}>
                         <TextField
                             fullWidth
                             label="Password"
@@ -79,7 +120,7 @@ const Profile = () => {
                             autoComplete="new-password"
                             {...register('password')}
                         />
-                    </Grid>
+                    </Grid> */}
                 </Grid>
                 <Button
                     type="submit"
