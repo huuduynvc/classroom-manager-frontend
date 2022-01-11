@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ListResponse, Class, initClass } from "models";
 import { DefaultRootState } from "react-redux";
-import { getAllClass, getAllClassOfUser, getClassById } from "./classThunk";
+import { getAllClass, getAllClassOfUser, getClassById} from "./classThunk";
 
 export interface ClassState extends DefaultRootState {
   loading: boolean;

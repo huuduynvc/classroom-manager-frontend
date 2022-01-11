@@ -10,7 +10,7 @@ import AssignmentDialog from "screens/Class/components/AssignmentDialog";
 import { GradeState } from "features/grade/gradeSlide";
 import MyProgress from "components/MyProgress";
 import { useDispatch } from "react-redux";
-import { updateGradeByClassId } from "features/grade/gradeThunk";
+import { getGradeByClassId, updateGradeByClassId } from "features/grade/gradeThunk";
 import moment from "moment"
 
 // a little function to help us with reordering the result
@@ -90,8 +90,7 @@ const ClassWork = ({
     handleAddAssignment();
   };
   // call API update
-  const handleUpdateGrade = () => {
-      console.log(items)
+  const handleUpdateGrade = async () => {
     let newItems = items.map((item) =>
       Object.assign(
         {},
@@ -104,7 +103,8 @@ const ClassWork = ({
         }
       )
     );
-    dispatch(updateGradeByClassId({ id: classId, assignments: newItems }));
+    await dispatch(updateGradeByClassId({ id: classId, assignments: newItems }));
+    await dispatch(getGradeByClassId(classId));
   };
   return (
     <div style={{ margin: "0 auto" }}>

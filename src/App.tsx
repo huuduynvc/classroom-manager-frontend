@@ -15,27 +15,37 @@ import UserProfile from "./screens/UserProfile";
 import Class from "./screens/Class";
 import { AuthContext } from "context/AuthContext";
 import { createAxiosResponseInterceptor } from "config/axios";
-import { useDispatch } from 'react-redux';
+import { useDispatch } from "react-redux";
 import NotFound from "screens/NotFound";
+import Admin from "screens/Admin";
 
 function App() {
-  const { user } = useContext(AuthContext)
+  const { changeUser, user } = useContext(AuthContext);
   const dispatch = useDispatch();
   useEffect(() => {
-    createAxiosResponseInterceptor(dispatch)
-  }, [user, dispatch])
+    createAxiosResponseInterceptor(changeUser, dispatch);
+  }, [user, dispatch, changeUser]);
+  
   return (
     <ConnectedRouter history={history}>
       <Switch>
-        {
-          user?.id === "" ?
-            (<><Route path="/signin">
+        {user?.id === "" ? (
+          <>
+            <Route path="/signin">
               <SignIn />
-            </Route> <Route>
-                <Redirect to="/signin" />
-              </Route></>) : (<><Route exact path="/error">
-                <NotFound />
-              </Route>
+            </Route>{" "}
+            <Route>
+              <Redirect to="/signin" />
+            </Route>
+          </>
+        ) : (
+          <>
+            <Route exact path="/error">
+              <NotFound />
+            </Route>
+            {user?.role_member !== undefined ? (
+              <>
+                {" "}
                 <Route path="/">
                   <WrapperLayout>
                     <Switch>
@@ -53,9 +63,20 @@ function App() {
                       </Route>
                     </Switch>
                   </WrapperLayout>
-                </Route> </>)
-        }
-
+                </Route>{" "}
+              </>
+            ) : (
+              <>
+                <Route exact path="/">
+                  <Redirect to="/admin" />
+                </Route>
+                <Route path="/admin">
+                  <Admin />
+                </Route>
+              </>
+            )}
+          </>
+        )}
       </Switch>
       {/* </div> */}
     </ConnectedRouter>

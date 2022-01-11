@@ -17,6 +17,7 @@ import { getClassById } from "features/class/classThunk";
 import ClassWork from "./mains/ClassWork";
 import { getGradeByClassId } from "features/grade/gradeThunk";
 import { GradeState } from "features/grade/gradeSlide";
+import Point from "./mains/Point";
 
 const Class = () => {
 
@@ -45,6 +46,9 @@ const Class = () => {
           </Route>
           <Route exact path={`/class/${params.id}/classwork`}>
             <ClassWork classId={params.id} grade={gradeState}/>
+          </Route>
+          <Route exact path={`/class/${params.id}/point`}>
+            <Point classId={params.id} grade={gradeState}/>
           </Route>
           <Route>
             <Redirect to={`/class/${params.id}/detail`} />

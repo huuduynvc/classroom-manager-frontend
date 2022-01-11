@@ -10,6 +10,7 @@ export interface User{
     avatar?: string;
     role_member?: number;
     studentID?:string;
+    ban?:string;
 }
 
 export interface SignInForm{

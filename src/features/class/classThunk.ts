@@ -1,3 +1,4 @@
+import { Class } from 'models';
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import classApi from "api/classApi";
 
@@ -19,5 +20,12 @@ export const getClassById = createAsyncThunk(
     'class/getClassById',
     async (id:string) =>{
         return (await classApi.getById(id))
+    }
+)
+
+export const addClass = createAsyncThunk(
+    'class/addClass',
+    async (newClass:Class) =>{
+        return (await classApi.add(newClass))
     }
 )

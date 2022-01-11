@@ -5,13 +5,21 @@ import peopleReducer from "features/people/peopleSlide";
 import classReducer from "features/class/classSlide";
 import userReducer from "features/user/userSlide";
 import gradeReducer from "features/grade/gradeSlide";
+import addClassReducer from "features/class/addClassSlide";
+import uploadReducer from "features/upload/uploadSlide";
+import PointReducer from "features/point/pointSlide";
+import adminReducer from "features/admin/adminSlide";
 
 const rootReducer = combineReducers({
   router: connectRouter(history),
   people: peopleReducer,
   class: classReducer,
   user: userReducer,
-  grade: gradeReducer
+  grade: gradeReducer,
+  addClass: addClassReducer,
+  upload: uploadReducer,
+  point: PointReducer,
+  admin: adminReducer,
 });
 
 export const store = configureStore({

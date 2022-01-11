@@ -84,7 +84,7 @@ const Profile = () => {
                     </Grid>
                     <Grid item xs={12}>
                         <TextField
-                            error={errors.fullname as any}
+                            error={errors.fullname?true:false}
                             fullWidth
                             id="fullname"
                             label="Full Name"

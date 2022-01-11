@@ -61,6 +61,15 @@ const PageRoute = () => {
             </div>
           </ListItem>
         </NavLink>
+        <NavLink to={`/class/${params.id}/point`} className={classes.link}>
+          <ListItem sx={{ width: "auto" }} disablePadding>
+            <div onClick={() => history.push(`/class/${params.id}/point`)}>
+              <ListItemButton >
+                <ListItemText sx={{ textAlign: "center" }} primary="Point" />
+              </ListItemButton>
+            </div>
+          </ListItem>
+        </NavLink>
       </List>
     </div>
   );

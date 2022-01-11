@@ -12,7 +12,7 @@ export const axiosInstance = axios.create({
   // }
 });
 
-export const createAxiosResponseInterceptor = (dispatch?: any) => {
+export const createAxiosResponseInterceptor = (changeUser?:any,dispatch?: any) => {
   // Add a request interceptor
   axiosInstance.interceptors.request.use(
     async function (config) {
@@ -67,7 +67,10 @@ export const createAxiosResponseInterceptor = (dispatch?: any) => {
             return axios(error.response.config);
           })
           .catch((error) => {
-            dispatch(push("/"));
+            localStorage.removeItem("token")
+            localStorage.removeItem("refreshToken")
+            changeUser({ id: "", username: "", password: "", fullname: "", email: "", studentID: "" })
+            dispatch(push("/signin"));
             return Promise.reject(error);
           })
           .finally(createAxiosResponseInterceptor);

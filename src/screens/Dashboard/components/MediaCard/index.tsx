@@ -37,7 +37,7 @@ species, ranging across all continents except Antarctica`,
         <CardMedia
           component="img"
           height="140"
-          image={img}
+          image={img===""?"/img.jpg":img}
           alt="green iguana"
         />
       </div>
