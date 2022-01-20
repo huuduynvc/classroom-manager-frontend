@@ -15,17 +15,19 @@ type Inputs = {
   name: string;
   username: string;
   password: string;
-  //password: string
+  email: string
 };
 export default function AddAccountDialog({
   open,
   setOpen,
   dispatchFunc,
+  dispatchFunc2,
   isLoading,
 }: {
   open: boolean;
   setOpen: (value: boolean) => void;
   dispatchFunc: any;
+  dispatchFunc2?:any;
   isLoading: boolean;
 }) {
   const {
@@ -45,14 +47,17 @@ export default function AddAccountDialog({
         
         const actionResult: any = await dispatch(dispatchFunc(data));
         const currentData = unwrapResult(actionResult);
-        if (currentData.status === 200) {
-          toast.success("Update profile successfully");
+        if (currentData.status === 200 || currentData.status === 201) {
+          toast.success("Create profile successfully");
+          if (dispatchFunc2) {
+            await dispatch(dispatchFunc2())
+          }
           setOpen(false);
         } else {
-          toast.error("Error update profile");
+          toast.error("Error Create profile");
         }
       } catch (err) {
-        toast.error("Error update profile");
+        toast.error("Error Create profile");
       }
     })();
   };
@@ -75,6 +80,16 @@ export default function AddAccountDialog({
           <TextField
             autoFocus
             margin="dense"
+            label="Email"
+            type="email"
+            fullWidth
+            variant="standard"
+            error={errors.email ? true : false}
+            {...register("email", { pattern: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/ })}
+          />
+          <TextField
+            autoFocus
+            margin="dense"
             label="Name"
             type="text"
             fullWidth
@@ -90,7 +105,7 @@ export default function AddAccountDialog({
             fullWidth
             variant="standard"
             error={errors.password ? true : false}
-            {...register("password")}
+            {...register("password", {pattern: /^(?!\s*$).+/})}
           />
         </DialogContent>
         <DialogActions>

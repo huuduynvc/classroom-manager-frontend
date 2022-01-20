@@ -14,3 +14,10 @@ export const importExcelGrades = createAsyncThunk(
         return (await uploadApi.importGrades(classid,formData))
     }
 )
+
+export const inviteUser = createAsyncThunk(
+    'invite/inviteUser',
+    async ({email,teacher}:{email:string,teacher:boolean}) =>{
+        return (await uploadApi.inviteUser(email,teacher))
+    }
+)

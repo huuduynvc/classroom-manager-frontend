@@ -1,64 +1,103 @@
-import { GradeState } from "features/grade/gradeSlide";
-import React, { useEffect,useState } from "react";
+import React, { useEffect } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useDispatch, useSelector } from "react-redux";
-import { getPoints } from "features/point/pointThunk";
-import { StoreState } from "models";
-import { PointState } from "features/point/pointSlide";
+import { StoreState, User } from "models";
 import MyProgress from "components/MyProgress";
-import { Button, Switch } from "@mui/material";
+import { Switch } from "@mui/material";
 import {
   GridToolbarContainer,
   GridToolbarColumnsButton,
   GridToolbarFilterButton,
   GridToolbarDensitySelector,
-} from '@mui/x-data-grid';
+} from "@mui/x-data-grid";
+import { getUsers, updateUser } from "features/admin/adminThunk";
+import moment from "moment";
+import ConfirmUpdateOrBlock from "screens/Admin/components/ConfirmUpdateOrBlock";
+import { toast } from "react-toastify";
+import { unwrapResult } from "@reduxjs/toolkit";
 
-
-
-const Point = ({ grade, classId }: { grade?: GradeState; classId?: string }) => {
+const Point = () => {
   const dispatch = useDispatch();
-  const points = useSelector((state: StoreState) => state.point);
-  const [flag,setFlag] = useState(false)
-  // useEffect(() => {
-  //   dispatch(getPoints(classId));
-  // }, [classId, dispatch,flag]);
+  const adminState = useSelector((state: StoreState) => state.admin);
+  const [openConfirm, setOpenConfirm] = React.useState(false);
+  const [content, setContent] = React.useState("");
+  const [userUpdate, setUserUpdate] = React.useState<any>(null);
+  useEffect(() => {
+    dispatch(getUsers());
+  }, [dispatch]);
 
-  const onChange = (value:any) => {
-    console.log(value)
-  }
-  const mapToArrayGridColDef: any = (points: PointState) => {
+  const onChange = (value: any) => {
+    setContent(`Do you want to ${value?.ban ? "unban" : "ban"} this user?`);
+    const newUser: User = { ...value };
+    newUser.ban = newUser?.ban ? false : true;
+    setUserUpdate(newUser);
+    setOpenConfirm(true);
+  };
+  const mapToArrayGridColDef: any = () => {
     const columns: GridColDef[] = [
-      { field: "id", headerName: "STT", width: 120,
-        editable: false, }, 
-      { field: "studentid", headerName: "Student ID", width: 120,
-        editable: true, },
+      { field: "id", headerName: "STT", width: 120, editable: false },
       {
-        field: "account",
-        headerName: "Account",
+        field: "studentid",
+        headerName: "Student ID",
+        width: 120,
+        editable: true,
+      },
+      {
+        field: "username",
+        headerName: "Username",
         width: 250,
       },
       {
-        field: "fullname",
-        headerName: "Full Name",
+        field: "email",
+        headerName: "Email",
+        width: 250,
       },
       {
         field: "ban",
         headerName: "Ban",
-        renderCell:  (params:any) => {
+        renderCell: (params: any) => {
           // dispatch here
-          return <Switch onChange={() => onChange(params.row)} checked = {params.row.ban}/>
-        }
+          return (
+            <Switch
+              onChange={() => onChange(params.row)}
+              checked={params.row.ban}
+            />
+          );
+        },
       },
       {
         field: "createdtime",
         headerName: "Created Time",
+        renderCell: (params) => {
+          return (
+            <>
+              {moment(new Date(params.row.creation_time)).format("DD-MM-YYYY")}
+            </>
+          );
+        },
       },
     ];
     return columns;
   };
 
-  const columns: GridColDef[] = mapToArrayGridColDef(points);
+  const columns: GridColDef[] = mapToArrayGridColDef();
+
+  const handleOk = async() => {
+    try {
+      const actionResult: any = await dispatch(updateUser({ user: userUpdate }));
+      const currentData = unwrapResult(actionResult);
+      if (currentData.status === 200 || currentData.status === 201) {
+        toast.success("Update profile successfully");
+        await dispatch(getUsers());
+      } else {
+        toast.error("Error update profile");
+      }
+    } catch (err) {
+      toast.error("Error update profile");
+    }
+    setOpenConfirm(false)
+        
+  };
 
   // const rows = points.points.map((ele) => {
   //   const row = { id: ele.id, fullName: ele.username };
@@ -71,36 +110,46 @@ const Point = ({ grade, classId }: { grade?: GradeState; classId?: string }) => 
   //   row["totalgrades"] = totalgrades;
   //   return row;
   // });
-
-  const rows = [{id:"1",studentid:"17123",account: "hd",fullname:"huynh duy",ban:true,createdtime:"17-08-2021"},
-                {id:"2",studentid:"17124",account: "hd2",fullname:"huynh duy",ban:false,createdtime:"15-06-2021"},
-                {id:"3",studentid:"17125",account: "hd3",fullname:"huynh duy",ban:false,createdtime:"01-07-2021"}]
-
-  const changeFlag = () => {
-      setFlag(!flag)
-  }
   return (
     <MyProgress
       // error={points.error}
       error={""}
-      loading={points.loading}
+      loading={adminState.loading}
     >
-      <div style={{ height: 400, width: "100%" }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          components={{
-            Toolbar: CustomToolbar,
-          }}
-          componentsProps={{ toolbar: { columns, rows, classId,changeFlag } }}
+      <>
+        <ConfirmUpdateOrBlock
+          title="Are you sure?"
+          handleOk={handleOk}
+          setOpen={setOpenConfirm}
+          open={openConfirm}
+          content={content}
         />
-      </div>
+        <div style={{ height: 400, width: "100%" }}>
+          <DataGrid
+            onCellEditCommit={(value: any) => {
+              setContent(
+                `Do you want to mapping this user with student id ${value.value}?`
+              );
+              // const newUser: User = value;
+              const cloneUser:any = {id:"",studentid:""};
+              cloneUser.studentid = value.value;
+              cloneUser.id = value.id
+              setUserUpdate(cloneUser);
+              setOpenConfirm(true);
+            }}
+            rows={adminState.users}
+            columns={columns}
+            components={{
+              Toolbar: CustomToolbar,
+            }}
+          />
+        </div>
+      </>
     </MyProgress>
   );
 };
 
 export default Point;
-
 
 function CustomToolbar() {
   return (

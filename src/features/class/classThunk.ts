@@ -29,3 +29,11 @@ export const addClass = createAsyncThunk(
         return (await classApi.add(newClass))
     }
 )
+
+
+export const joinClass = createAsyncThunk(
+    'class/joinClass',
+    async ({code,role}:{code:any,role:any}) =>{
+        return (await classApi.joinClass(code,role))
+    }
+)

@@ -8,7 +8,7 @@ const userApi = {
   },
 
   updateProfile({id,fullname,studentid}: UpdateProfileForm): Promise<any> {
-    const url = `/user/${id}`;
+    const url = `/user`;
     return axiosInstance.patch(url, {id,fullname,studentid});
   },
 

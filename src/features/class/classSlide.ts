@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ListResponse, Class, initClass } from "models";
 import { DefaultRootState } from "react-redux";
-import { getAllClass, getAllClassOfUser, getClassById} from "./classThunk";
+import { getAllClass, getAllClassOfUser, getClassById,joinClass} from "./classThunk";
 
 export interface ClassState extends DefaultRootState {
   loading: boolean;
@@ -35,6 +35,7 @@ export const classSlice = createSlice({
   },
   extraReducers: {
     [getAllClass.pending as any]: (state) => {
+      state.error=""
       state.loading = true;
     },
     [getAllClass.rejected as any]: (state, action: any) => {
@@ -43,9 +44,11 @@ export const classSlice = createSlice({
     },
     [getAllClass.fulfilled as any]: (state, action) => {
       state.loading = false;
+      state.error=""
       state.list = action.payload.data;
     },
     [getAllClassOfUser.pending as any]: (state) => {
+      state.error=""
       state.loading = true;
     },
     [getAllClassOfUser.rejected as any]: (state, action: any) => {
@@ -55,8 +58,10 @@ export const classSlice = createSlice({
     [getAllClassOfUser.fulfilled as any]: (state, action) => {
       state.loading = false;
       state.list = action.payload.data;
+      state.error=""
     },
     [getClassById.pending as any]: (state) => {
+      state.error=""
       state.loading = true;
     },
     [getClassById.rejected as any]: (state, action: any) => {
@@ -67,6 +72,19 @@ export const classSlice = createSlice({
     [getClassById.fulfilled as any]: (state, action) => {
       state.loading = false;
       state.currentClass = action.payload.data;
+      state.error=""
+    },
+    [joinClass.pending as any]: (state) => {
+      state.error=""
+      state.loading = true;
+    },
+    [joinClass.rejected as any]: (state, action: any) => {
+      state.loading = false;
+      state.error = action.payload?.error;
+    },
+    [joinClass.fulfilled as any]: (state) => {
+      state.loading = false;
+      state.error=""
     },
   },
 });

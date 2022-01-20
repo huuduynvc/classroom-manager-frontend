@@ -89,7 +89,10 @@ const ListPeople = ({
         {listUser.map((user) => (
           <Grid key={user.username} item xs={8} sx={{ display: "flex", alignItems: "center" }}>
             <Avatar sx={{ marginRight: "20px" }} src={user.avatar} />
-            <p>{user.username}</p>
+            {
+              name==="Teachers"?<p> {user.username}</p>:
+              <p>StudentID: {user.studentid} - Name: {user.username}</p>
+            }
           </Grid>
         ))}
       </Grid>

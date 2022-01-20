@@ -12,7 +12,7 @@ type ContextProps = {
 };
 
 export const AuthContext = createContext<Partial<ContextProps>>({
-    user: { id: "", username: "", password: "", fullname: "", email: "", studentID: "" },
+    user: { id: "", username: "", password: "", fullname: "", email: "", studentid: "" },
     changeUser: (newUser: User) => { },
 });
 
@@ -28,6 +28,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     const provider = {
         user: currentUser,
         changeUser: (newUser: User) => {
+            console.log({newUser})
             setCurrentUser(newUser);
         },
     };

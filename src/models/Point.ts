@@ -1,11 +1,7 @@
 export interface Point{
-    username:string;
+    fullname:string;
     id: string;
-    points: PointAssignment[];
-}
-
-export interface PointAssignment{
-    point: number;
-    grade: string;
-    gradeName: string;
+    studentid: string;
+    points: number[];
+    grades: string[];
 }

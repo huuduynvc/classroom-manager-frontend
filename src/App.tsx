@@ -18,6 +18,7 @@ import { createAxiosResponseInterceptor } from "config/axios";
 import { useDispatch } from "react-redux";
 import NotFound from "screens/NotFound";
 import Admin from "screens/Admin";
+import Join from "screens/Join";
 
 function App() {
   const { changeUser, user } = useContext(AuthContext);
@@ -25,7 +26,6 @@ function App() {
   useEffect(() => {
     createAxiosResponseInterceptor(changeUser, dispatch);
   }, [user, dispatch, changeUser]);
-  
   return (
     <ConnectedRouter history={history}>
       <Switch>
@@ -43,7 +43,7 @@ function App() {
             <Route exact path="/error">
               <NotFound />
             </Route>
-            {user?.role_member !== undefined ? (
+            {user?.role_user !== 1 ? (
               <>
                 {" "}
                 <Route path="/">
@@ -54,6 +54,9 @@ function App() {
                       </Route>
                       <Route path="/profile">
                         <UserProfile />
+                      </Route> 
+                      <Route path="/join/:code/:role">
+                        <Join />
                       </Route>
                       <Route path="/class/:id">
                         <Class />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   GridToolbarContainer,
   GridToolbarColumnsButton,
@@ -17,20 +17,22 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import DialogImport from "../DialogImport";
 import { importExcelGrades } from "features/upload/uploadThunk";
+import { AuthContext } from "context/AuthContext";
 
 const CustomToolbar = ({
   columns,
   rows,
   classId,
-  changeFlag
+  changeFlag,
 }: {
   columns: any;
   rows: any;
   classId: string;
-  changeFlag:any
+  changeFlag: any;
 }) => {
   const dispatch = useDispatch();
-  const [open,setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const { user } = useContext(AuthContext);
   const exportTemplate = () => {
     const columnTitles = columns.map((columnDef) => columnDef.headerName);
     const builder = new CsvBuilder(`grades_template_${classId}.csv`)
@@ -41,47 +43,55 @@ const CustomToolbar = ({
   };
   const saveChange = async () => {
     const columnTitles = columns.map((columnDef) => columnDef.headerName);
-    const csvData = rows.map((rowData) =>
-      columns.map((columnDef) => rowData[rowData.field])
-    );
     try {
-      const resultAction:any = await dispatch(
-        saveChangeGrades({ classId, columns: columnTitles, rows: csvData })
+      const resultAction: any = await dispatch(
+        saveChangeGrades({ classId, columns: columnTitles, rows })
       );
-      unwrapResult(resultAction)
-      const resultAction1:any = await dispatch(getPoints(classId));
-      unwrapResult(resultAction1)
+      unwrapResult(resultAction);
+      const resultAction1: any = await dispatch(getPoints(classId));
+      unwrapResult(resultAction1);
     } catch (e) {
-        toast.error("Error when update grades")
+      toast.error("Error when update grades");
     }
   };
 
   const importGrades = async () => {
-    setOpen(true)
+    setOpen(true);
   };
-  
+
   return (
-      <>
-    <GridToolbarContainer>
-      <GridToolbarColumnsButton />
-      <GridToolbarFilterButton />
-      <GridToolbarDensitySelector />
-      <GridToolbarExport
-        csvOptions={{ fileName: `grades_${classId}` }}
-        printOptions={{ disableToolbarButton: true }}
+    <>
+      <GridToolbarContainer>
+        <GridToolbarColumnsButton />
+        <GridToolbarFilterButton />
+        <GridToolbarDensitySelector />
+        <GridToolbarExport
+          csvOptions={{ fileName: `grades_${classId}` }}
+          printOptions={{ disableToolbarButton: true }}
+        />
+        {user?.role_member === 1 ? (
+          <>
+            {" "}
+            <Button onClick={exportTemplate}>
+              <FileDownloadIcon /> Export template
+            </Button>
+            <LoadingButton onClick={saveChange}>
+              <PublishIcon /> Save change
+            </LoadingButton>
+            <LoadingButton onClick={importGrades}>
+              <PublishIcon /> Import Grades
+            </LoadingButton>
+          </>
+        ) : null}
+      </GridToolbarContainer>
+      <DialogImport
+        callback={() => changeFlag()}
+        title="grades"
+        importDispatch={importExcelGrades}
+        classid={classId}
+        open={open}
+        handleClose={() => setOpen(false)}
       />
-      <Button onClick={exportTemplate}>
-        <FileDownloadIcon /> Export template
-      </Button>
-      <LoadingButton onClick={saveChange}>
-        <PublishIcon /> Save change
-      </LoadingButton>
-      <LoadingButton onClick={importGrades}>
-        <PublishIcon /> Import Grades
-      </LoadingButton>
-    </GridToolbarContainer>
-    <DialogImport callback={() =>changeFlag()} title="grades" importDispatch={importExcelGrades} classid={classId} open={open} handleClose={() => setOpen(false)} />
-           
     </>
   );
 };

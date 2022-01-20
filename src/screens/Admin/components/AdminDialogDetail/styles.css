@@ -1,0 +1,8 @@
+.admin-dialog-detail{
+    list-style-type: none;
+}
+
+.admin-dialog-detail > li {
+    display: flex;
+    justify-content: space-between;
+}

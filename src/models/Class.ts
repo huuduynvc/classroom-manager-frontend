@@ -7,6 +7,8 @@ export interface Class {
   img?: string;
   room?:string;
   subject?:string;
+  id_class?:number;
+  role_member?:number;
 }
 
 export const initClass: Class = {

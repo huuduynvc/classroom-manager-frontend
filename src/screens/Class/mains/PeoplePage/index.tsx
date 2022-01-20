@@ -13,7 +13,7 @@ import { StoreState } from 'models';
 import { AuthContext } from 'context/AuthContext';
 import DialogImport from 'screens/Class/components/DialogImport';
 
-const PeoplePage = ({ id }: { id: string }) => {
+const PeoplePage = ({ id,code }: { id: string,code?:string }) => {
     const dispatch = useDispatch()
     const [teachers, setTeachers] = useState<User[]>([]);
     const [students, setStudents] = useState<User[]>([]);
@@ -60,7 +60,7 @@ const PeoplePage = ({ id }: { id: string }) => {
     // const listUser:User[] = peopleState.list;
     const onClickInvite = (name: string) => {
         setName(name);
-        setLink(name)
+        setLink(window.location.href.replace(`class/${id}/list`,`join/${code}/${name==="Students"?2:1}`))
         handleClickOpen()
     }
 

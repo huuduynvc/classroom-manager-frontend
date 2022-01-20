@@ -1,7 +1,7 @@
 import { Class,User } from 'models';
 import { createSlice } from "@reduxjs/toolkit";
 import { DefaultRootState } from "react-redux";
-import { getAdmins,getUsers,getClasses,updateUser,createAdmin } from "./adminThunk";
+import { getAdmins,getUsers,getClasses,createAdmin } from "./adminThunk";
 
 export interface AdminState extends DefaultRootState {
   loading: boolean;

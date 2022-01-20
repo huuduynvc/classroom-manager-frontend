@@ -1,33 +1,34 @@
-import { GradeState } from "features/grade/gradeSlide";
-import React, { useEffect,useState } from "react";
+import React, { useEffect } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useDispatch, useSelector } from "react-redux";
-import { getPoints } from "features/point/pointThunk";
 import { StoreState } from "models";
 import { PointState } from "features/point/pointSlide";
 import MyProgress from "components/MyProgress";
-import {  Switch } from "@mui/material";
 import {
   GridToolbarContainer,
   GridToolbarColumnsButton,
   GridToolbarFilterButton,
   GridToolbarDensitySelector,
 } from '@mui/x-data-grid';
+import { getClasses } from "features/admin/adminThunk";
+import moment from "moment";
 
 
 
 const Point = () => {
   const dispatch = useDispatch();
-  const points = useSelector((state: StoreState) => state.point);
-  // useEffect(() => {
-  //   dispatch(getPoints(classId));
-  // }, [classId, dispatch,flag]);
+  const adminState = useSelector((state: StoreState) => state.admin);
+  useEffect(() => {
+    dispatch(getClasses());
+  }, [dispatch]);
 
-  const mapToArrayGridColDef: any = (points: PointState) => {
+  const mapToArrayGridColDef: any = (classes: PointState) => {
     const columns: GridColDef[] = [
       { field: "id", headerName: "STT", width: 120,
         editable: false, }, 
       { field: "classname", headerName: "Class Name", width: 120,
+        editable: false, },
+      { field: "code", headerName: "Code", width: 120,
         editable: false, },
       {
         field: "students",
@@ -35,14 +36,14 @@ const Point = () => {
         width: 250,
       },
       {
-        field: "createdtime",
+        field: "modification_time",
         headerName: "Created Time",
       },
     ];
     return columns;
   };
 
-  const columns: GridColDef[] = mapToArrayGridColDef(points);
+  const columns: GridColDef[] = mapToArrayGridColDef(adminState.classes);
 
   // const rows = points.points.map((ele) => {
   //   const row = { id: ele.id, fullName: ele.username };
@@ -56,15 +57,15 @@ const Point = () => {
   //   return row;
   // });
 
-  const rows = [{id:"1",classname:"17123",students: 20,createdtime:"17-08-2021"},
-                {id:"2",classname:"17124",students: 15,createdtime:"15-06-2021"},
-                {id:"3",classname:"17125",students: 17,createdtime:"01-07-2021"}]
-
+  const rows = adminState.classes.map(ele => (
+    {id:ele.id,classname:ele.classname,code:ele.code,students: 20,modification_time:moment(new Date(ele.modification_time)).format("DD-MM-YYYY")}
+  ))
+  
   return (
     <MyProgress
       // error={points.error}
       error={""}
-      loading={points.loading}
+      loading={adminState.loading}
     >
       <div style={{ height: 400, width: "100%" }}>
         <DataGrid

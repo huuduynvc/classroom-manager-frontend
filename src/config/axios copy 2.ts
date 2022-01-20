@@ -2,7 +2,7 @@ import axios from "axios";
 import { push } from "connected-react-router";
 import { saveLogin } from "./../functions/index";
 
-const baseURL:string = process.env.BASE_URL || "https://localhost:3030/api"
+const baseURL:string = process.env.BASE_URL || "https://d21b-2402-800-63a7-c4dd-fd45-39f0-e4a8-8c00.ngrok.io/api"
 
 export const axiosInstance = axios.create({
   baseURL: baseURL,

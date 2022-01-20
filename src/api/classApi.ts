@@ -55,7 +55,12 @@ const classApi = {
   updateGradeByClassId(id:string,assignments: Assignment[]): Promise<any> {
     const url = `/grade/class/${id}`;
     return axiosInstance.post(url,{assignments})
-  }
+  },
+
+  joinClass(code,role): Promise<any> {
+    const url = `/class/invite/bylink?cjc=${code}&role=${role}`;
+    return axiosInstance.get(url)
+  },
 };
 
 export default classApi;

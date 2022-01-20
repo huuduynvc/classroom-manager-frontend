@@ -1,4 +1,4 @@
-import { axiosInstance } from "config/axios";
+import { axiosInstance } from 'config/axios';
 
 const uploadApi = {
   importListUser(classid,formData): Promise<any> {
@@ -11,12 +11,19 @@ const uploadApi = {
     });
   },
   importGrades(classid,formData): Promise<any> {
-    const url = `/class/${classid}/upload`;
+    const url = `/class/${classid}/upload_grade`;
     return axiosInstance({
       method: "POST",
       url,
       data: formData,
       headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+  inviteUser(email,teacher): Promise<any> {
+    // const url = `/class/${classid}/upload`;
+    return axiosInstance({
+      method: "POST",
+      // url,
     });
   },
 };

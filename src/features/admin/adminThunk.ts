@@ -32,7 +32,7 @@ export const updateUser = createAsyncThunk(
 
 export const createAdmin = createAsyncThunk(
     'admin/createAdmin',
-    async ({username,name,password}:{username:string,name:string,password:string}) =>{
-        return (await adminApi.createAdmin({username,name,password}))
+    async ({username,name,password,email}:{username:string,name:string,password:string,email:string}) =>{
+        return (await adminApi.createAdmin({username,name,password,email}))
     }
 )

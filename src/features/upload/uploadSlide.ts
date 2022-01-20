@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { DefaultRootState } from "react-redux";
-import { importExcelGrades,importExcelStudents } from "./uploadThunk";
+import { importExcelGrades,importExcelStudents,inviteUser } from "./uploadThunk";
 
 export interface UploadState extends DefaultRootState {
   loading: boolean;
@@ -39,6 +39,16 @@ export const uploadSlice = createSlice({
       state.error = action.payload?.error;
     },
     [importExcelStudents.fulfilled as any]: (state) => {
+      state.loading = false;
+    },
+    [inviteUser.pending as any]: (state) => {
+      state.loading = true;
+    },
+    [inviteUser.rejected as any]: (state, action: any) => {
+      state.loading = false;
+      state.error = action.payload?.error;
+    },
+    [inviteUser.fulfilled as any]: (state) => {
       state.loading = false;
     },
   },

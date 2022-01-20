@@ -33,8 +33,8 @@ const Box = () => {
           <Grid container spacing={3}>
             {
               classState.list?.map((ele) =>
-              (<Grid key={ele.id} item xs={12} md={4} lg={3}>
-                <MediaCard id={ele.id} name={ele.classname} img={ele.img != null ? ele.img : '/img.jpg'} onClick={handleClickImageClass} />
+              (<Grid key={ele.id_class} item xs={12} md={4} lg={3}>
+                <MediaCard id={ele.id_class} name={ele.classname} img={ele.img != null ? ele.img : '/img.jpg'} onClick={handleClickImageClass} />
               </Grid>)
               )
             }

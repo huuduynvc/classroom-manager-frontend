@@ -1,18 +1,18 @@
 import React from 'react'
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useForm } from 'react-hook-form';
-import { useContext } from 'react';
+import { useContext,useState } from 'react';
 import { AuthContext } from 'context/AuthContext';
 
 import { useDispatch } from 'react-redux';
 import { updateProfileAction } from 'features/user/userThunk';
 import { toast } from 'react-toastify';
 import { unwrapResult } from '@reduxjs/toolkit';
+import { LoadingButton } from '@mui/lab';
 
 type Inputs = {
     id: string,
@@ -26,14 +26,16 @@ const Profile = () => {
 
     const { register, handleSubmit, formState: { errors } } = useForm<Inputs>();
     const { user, changeUser } = useContext(AuthContext)
+    const [loading,setLoading] = useState(false)
     const onSubmit = async function (data: any) {
         (async () => {
             try {
+                setLoading(true)
                 const actionResult: any = await dispatch(updateProfileAction(data));
                 const currentData = unwrapResult(actionResult);
                 if (currentData.status === 200 && changeUser) {
                     if (user){
-                        user.studentID = data.studentid
+                        user.studentid = data.studentid
                         changeUser(user)
                     }
                     
@@ -44,6 +46,7 @@ const Profile = () => {
             } catch (err) {
               toast.error("Error update profile")
             }
+            setLoading(false)
     
         })()
     }
@@ -97,7 +100,7 @@ const Profile = () => {
                             fullWidth
                             id="studentid"
                             label="Student ID"
-                            defaultValue={user?.studentID}
+                            defaultValue={user?.studentid}
                             {...register('studentid')}
                         />
                     </Grid>
@@ -122,15 +125,16 @@ const Profile = () => {
                         />
                     </Grid> */}
                 </Grid>
-                <Button
+                <LoadingButton
                     type="submit"
                     fullWidth
+                    loading={loading}
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
                     onClick={handleSubmit(onSubmit)}
                 >
                     Update
-                </Button>
+                </LoadingButton>
             </Box>
         </Box >
     )

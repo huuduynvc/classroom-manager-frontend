@@ -9,8 +9,9 @@ export interface User{
     modification_time?: string;
     avatar?: string;
     role_member?: number;
-    studentID?:string;
-    ban?:string;
+    studentid?:string;
+    ban?:boolean;
+    role_user?: number;
 }
 
 export interface SignInForm{
